@@ -53,12 +53,20 @@
  
  
  
+ typedef enum{
+     FIFO = 0,
+     REG = 1
+ }ICP20100_USER_READ_MODE;
+ 
+ 
+ 
  typedef struct ICP20100_Settings{
      ICP20100_MEAS_CONFIG meas_config;
      ICP20100_FORCED_MEAS_TRIGGER forced_meas;
      ICP20100_MEAS_MODE meas_mode;
      ICP20100_POWER_MODE power_mode;
      ICP20100_FIFO_READOUT_MODE fifo_read;
+     ICP20100_USER_READ_MODE user_read_mode;
  }ICP20100_Settings;
  
  
@@ -68,7 +76,8 @@
      void* intf;
      ICP20100_Read_t read;
      ICP20100_Write_t write;
-     ICP20100_Delay_t delay;
+     ICP20100_Delay_t delay_ms;
+     ICP20100_Delay_t delay_us;
      ICP20100_Settings settings;
  }ICP20100_Device_t;
  
@@ -82,11 +91,13 @@
  void ICP20100_SetMeasMode(ICP20100_Device_t* dev, ICP20100_MEAS_MODE range);
  void ICP20100_SetPowerMode(ICP20100_Device_t* dev, ICP20100_POWER_MODE range);
  void ICP20100_SetFIFOReadoutMode(ICP20100_Device_t* dev, ICP20100_FIFO_READOUT_MODE range);
+ void ICP20100_SetUserReadMode(ICP20100_Device_t* dev, ICP20100_USER_READ_MODE range);
  int ICP20100_ProcessRawData(ICP20100_Device_t* dev, uint8_t packet_cnt, uint8_t *data, int32_t *pressure, int32_t *temperature);
- void ICP20100_ReadFifo(ICP20100_Device_t* dev, uint8_t address, uint8_t *data, uint8_t lenght);
- void ICP20100_ReadData(ICP20100_Device_t* dev);
- 
- 
+ int8_t ICP20100_ReadFifo(ICP20100_Device_t* dev, uint8_t address, uint8_t *data, uint8_t lenght);
+ int8_t ICP20100_DataInFifo(ICP20100_Device_t* dev, float *temp_c, float *press);
+ int8_t ICP20100_DataInRegister(ICP20100_Device_t* dev, float *temp_c, float *press);
+ int8_t ICP20100_ReadData(ICP20100_Device_t* dev);
+ void ICP20100_FifoFlush(ICP20100_Device_t* dev);
  
  
  
